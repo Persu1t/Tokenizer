@@ -1,0 +1,16 @@
+{
+  "name": "tokenizer",
+  "version": "1.0.0",
+  "description": "a simple tokenizer",
+  "keywords": [
+    "chaicode",
+    "chatgpt"
+  ],
+  "license": "ISC",
+  "author": "Rishabh Shukla",
+  "type": "module",
+  "main": "token.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
