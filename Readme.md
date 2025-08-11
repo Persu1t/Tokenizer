@@ -36,4 +36,4 @@ cd your-folder-name
 # Install dependencies (none needed for core functionality)
 npm install
 
-# Now run the code with code runner or node file. 
+# Now run the code with code runner or node command. 
