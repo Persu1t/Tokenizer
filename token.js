@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import readline from "readline";
 
 // Recreate __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -15,10 +16,9 @@ class SimpleTokenizer {
 
   // Learn vocabulary from text
   fit(text) {
-    const words = text
-      .replace(/[^\w\s']/g, "") // remove punctuation except apostrophe
-      .split(/\s+/)
-      .filter(Boolean);
+const words = text
+  .split(/\s+/) // split by space only
+  .filter(Boolean);
 
     for (const word of words) {
       if (!(word in this.word2id)) {
@@ -32,13 +32,32 @@ class SimpleTokenizer {
   // Encode text into array of IDs
   encode(text) {
     const words = text
-      .replace(/[^\w\s']/g, "")
-      .split(/\s+/)
-      .filter(Boolean);
+  .split(/\s+/) // split by space only
+  .filter(Boolean);
 
-    return words.map(word =>
-      word in this.word2id ? this.word2id[word] : -1
-    );
+    let newWords = [];
+
+    const ids = words.map(word => {
+      if (word in this.word2id) {
+        return this.word2id[word];
+      } else {
+        // Add word to vocab dynamically
+        const id = this.nextId++;
+        this.word2id[word] = id;
+        this.id2word[id] = word;
+        newWords.push(word);
+        return id;
+      }
+    });
+
+    // If we added new words, append to corpus and save vocab
+    if (newWords.length > 0) {
+      fs.appendFileSync(corpusPath, "\n" + newWords.join(" "), "utf-8");
+      this.saveVocab(vocabPath);
+      console.log(`Added new words: ${newWords.join(", ")}`);
+    }
+
+    return ids;
   }
 
   // Decode array of IDs into text
@@ -74,17 +93,19 @@ tokenizer.fit(corpus);
 tokenizer.saveVocab(vocabPath);
 console.log("Vocabulary saved to vocab.json");
 
-// Text to encode from CLI or default
-const testString = process.argv[2] || "hello world test";
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-const encoded = tokenizer.encode(testString);
-const newEncodeString = tokenizer.encode("have fun world")
+rl.question("Enter your text to encode: ", (answer)=>{
+  console.log(`You entered: ${answer}`);
+  // Encode the input text
+  const encode = tokenizer.encode(answer);
+  console.log("Encodeing complete.... ", encode);
 
-console.log("Encoded:", encoded);
-console.log("New Encoded String:", newEncodeString);
-
-// Decode for verification
-const decoded = tokenizer.decode(encoded);
-const decodedNew = tokenizer.decode(newEncodeString);
-console.log("Decoded:", decoded);
-console.log("Decoded New String:", decodedNew);
+  // Decode for the verification
+  const decode = tokenizer.decode(encode);
+  console.log("Decoded text:", decode);
+  rl.close();
+})
