@@ -17,7 +17,7 @@ class SimpleTokenizer {
   // Learn vocabulary from text
   fit(text) {
 const words = text
-  .split(/\s+/) // split by space only
+  .split(/\s+/)
   .filter(Boolean);
 
     for (const word of words) {
@@ -32,7 +32,7 @@ const words = text
   // Encode text into array of IDs
   encode(text) {
     const words = text
-  .split(/\s+/) // split by space only
+  .split(/\s+/) 
   .filter(Boolean);
 
     let newWords = [];
