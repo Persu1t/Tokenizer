@@ -99,7 +99,6 @@ const rl = readline.createInterface({
 });
 
 rl.question("Enter your text to encode: ", (answer)=>{
-  console.log(`You entered: ${answer}`);
   // Encode the input text
   const encode = tokenizer.encode(answer);
   console.log("Encodeing complete.... ", encode);
